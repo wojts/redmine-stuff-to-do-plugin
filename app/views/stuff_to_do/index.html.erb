@@ -34,6 +34,8 @@
 
 <div style="clear:both;"></div>
 
+<%= render :partial => 'day_grid' unless Setting.plugin_stuff_to_do_plugin['use_day_grid'].blank? || Setting.plugin_stuff_to_do_plugin['use_day_grid'] == "0" %>
+
 <% other_formats_links do |f| %>
   <%= f.link_to 'CSV', :url => params, :onclick => "showModal('csv-export-options', '330px'); return false;" %>
 <% end %>
