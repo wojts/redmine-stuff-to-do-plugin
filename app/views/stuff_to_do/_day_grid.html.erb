@@ -1,17 +1,18 @@
 <h3>Day Grid</h3>
 
-<% range = Date.today.at_beginning_of_week..Date.today.at_end_of_week %>
-
 <table id="day_grid">
   <tr>
-    <% range.each do |day| %>
+    <% @days.each do |day| %>
       <th><%= day.strftime("%A") %><br /><%= day.to_formatted_s(:short) %></th>
     <% end %>
   </tr>
   <tr>
-    <% range.each do |day| %>
+    <% @days.each do |day| %>
       <td>
-        <ol class="day_grid_day">
+        <ol class="day_grid_day" data-day="<%= day %>">
+          <% if @stuff_days && @stuff_days[day] %>
+            <%= render :partial => 'item', :collection => stuff_for(@stuff_days[day].sort_by(&:position)) %>
+          <% end %>
         </ol>
       </td>
     <% end %>

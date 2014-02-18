@@ -35,6 +35,13 @@ jQuery(function($) {
             }});
 	});
 
+  moveOrCopy = function(ui, context) {
+    target = ui.item.parent();
+    if (!target.is('.day_grid_day') && this.copyHelper) {
+      this.copyHelper.remove();
+    }
+  },
+
   attachSortables = function() {
     $("#available").sortable({
         cancel: 'a',
@@ -43,6 +50,7 @@ jQuery(function($) {
         dropOnEmpty: true,
         tolerance: 'pointer',
         update : function (event, ui) {
+          moveOrCopy.call(this, ui, 'available');
             if ($('#available li.issue').length > 0) {
                 $("#available li.empty-list").hide();
             } else {
@@ -53,13 +61,6 @@ jQuery(function($) {
           this.copyHelper = li.clone().insertAfter(li);
           $(this).data('copied', false);
           return li.clone();
-        },
-        stop: function (event, ui) {
-          var copied = $(this).data('copied');
-          if (!copied) {
-            this.copyHelper.remove();
-          }
-          this.copyHelper = null;
         }
     });
 
@@ -69,19 +70,14 @@ jQuery(function($) {
         dropOnEmpty: true,
         placeholder: 'drop-accepted',
         tolerance: 'pointer',
-        update : function (event, ui) {},
+        update : function (event, ui) {
+          moveOrCopy.call(this, ui, 'doing-now');
+          saveOrder(ui);
+        },
         helper: function (event, li) {
           this.copyHelper = li.clone().insertAfter(li);
           $(this).data('copied', false);
           return li.clone();
-        },
-        stop: function (event, ui) {
-          var copied = $(this).data('copied');
-          if (!copied) {
-            this.copyHelper.remove();
-          }
-          this.copyHelper = null;
-          saveOrder(ui);
         }
     });
 
@@ -91,19 +87,13 @@ jQuery(function($) {
         dropOnEmpty: true,
         placeholder: 'drop-accepted',
         tolerance: 'pointer',
-        update : function (event, ui) {},
+        update : function (event, ui) {
+          moveOrCopy.call(this, ui, 'recommended');
+          saveOrder(ui);
+        },
         helper: function (event, li) {
           this.copyHelper = li.clone().insertAfter(li);
-          $(this).data('copied', false);
           return li.clone();
-        },
-        stop: function (event, ui) {
-          var copied = $(this).data('copied');
-          if (!copied) {
-            this.copyHelper.remove();
-          }
-          this.copyHelper = null;
-          saveOrder(ui);
         }
     });
 
@@ -126,12 +116,8 @@ jQuery(function($) {
               calculateHeight(ui.element, newHeight);
             }
           });
-        },
-        receive: function (e, ui) {
-          ui.sender.data('copied', true);
-        },
-        done: function(event, ui) {
-          saveDay(ui);
+
+          saveDays(ui);
         }
     });
 
@@ -191,6 +177,32 @@ jQuery(function($) {
             $("div#stuff-to-do-error").html("Error saving lists.  Please refresh the page and try again.").show();
         }});
 
+  },
+
+  saveDays = function(ui) {
+    var data = {user_id: user_id, stuff_days: {}, authenticity_token: window._token},
+        target = ui.item.parent(),
+        sender = ui.sender.parent();
+
+    if (target.is('.day_grid_day')) {
+      data['stuff_days'][target.data('day')] = target.sortable('toArray');
+    }
+
+    if (sender.is('.day_grid_day')) {
+      data['stuff_days'][sender.data('day')] = sender.sortable('toArray');
+    }
+
+    $.ajax({
+      type: "POST",
+      url: "stuff_to_do/save_days.js",
+      dataType: "js",
+      data: data,
+      success: function(response) {
+      },
+      error: function(response) {
+        $("div#stuff-to-do-error").html("Error saving lists.  Please refresh the page and try again.").show();
+      }
+    });
   },
 
     isProjectItem = function(element) {
