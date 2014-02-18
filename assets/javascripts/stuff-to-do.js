@@ -117,7 +117,7 @@ jQuery(function($) {
           var project = ui.item.find('[data-project]').data('project');
 
           calculateHeight(ui.item);
-          ui.item.css('background', generateCssSeriesColor(project));
+          ui.item.css(generateCssSeriesColor(project));
 
           ui.item.resizable({
             handles: 's',
@@ -129,8 +129,10 @@ jQuery(function($) {
         },
         receive: function (e, ui) {
           ui.sender.data('copied', true);
+        },
+        done: function(event, ui) {
+          saveDay(ui);
         }
-        //update : function (event, ui) { saveOrder(ui); },
     });
 
   },
@@ -273,13 +275,13 @@ function hsvToRgb(h, s, v) {
 }
 
 function generateCssSeriesColor(project) {
-  var color;
-  if (projectColors[project]) {
-    color = projectColors[project];
-  } else {
+  if (!projectColors[project]) {
     hue += GOLDEN_RATIO;
     hue %= 1;
-    projectColors[project] = color = "rgb(" + hsvToRgb(hue, saturation, value) + ")";
+    projectColors[project] = {
+      background: "rgb(" + hsvToRgb(hue, saturation, value) + ")",
+      'border-color': "rgb(" + hsvToRgb(hue, saturation + 0.35, value) + ")"
+    };
   }
-  return color;
+  return projectColors[project];
 }
