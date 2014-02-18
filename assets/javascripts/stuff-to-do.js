@@ -48,6 +48,18 @@ jQuery(function($) {
                 $("#available li.empty-list").show();
             }
         },
+        helper: function (event, li) {
+          this.copyHelper = li.clone().insertAfter(li);
+          $(this).data('copied', false);
+          return li.clone();
+        },
+        stop: function (event, ui) {
+          var copied = $(this).data('copied');
+          if (!copied) {
+            this.copyHelper.remove();
+          }
+          this.copyHelper = null;
+        }
     });
 
     $("#doing-now").sortable({
@@ -55,7 +67,20 @@ jQuery(function($) {
         connectWith: ["#available", "#recommended", ".day_grid_day"],
         dropOnEmpty: true,
         placeholder: 'drop-accepted',
-        update : function (event, ui) { saveOrder(ui); },
+        update : function (event, ui) {},
+        helper: function (event, li) {
+          this.copyHelper = li.clone().insertAfter(li);
+          $(this).data('copied', false);
+          return li.clone();
+        },
+        stop: function (event, ui) {
+          var copied = $(this).data('copied');
+          if (!copied) {
+            this.copyHelper.remove();
+          }
+          this.copyHelper = null;
+          saveOrder(ui);
+        }
     });
 
     $("#recommended").sortable({
@@ -63,7 +88,20 @@ jQuery(function($) {
         connectWith: ["#available", "#doing-now", ".day_grid_day"],
         dropOnEmpty: true,
         placeholder: 'drop-accepted',
-        update : function (event, ui) { saveOrder(ui); },
+        update : function (event, ui) {},
+        helper: function (event, li) {
+          this.copyHelper = li.clone().insertAfter(li);
+          $(this).data('copied', false);
+          return li.clone();
+        },
+        stop: function (event, ui) {
+          var copied = $(this).data('copied');
+          if (!copied) {
+            this.copyHelper.remove();
+          }
+          this.copyHelper = null;
+          saveOrder(ui);
+        }
     });
 
     $(".day_grid_day").sortable({
@@ -81,6 +119,9 @@ jQuery(function($) {
               calculateHeight(ui.element, newHeight);
             }
           });
+        },
+        receive: function (e, ui) {
+          ui.sender.data('copied', true);
         }
         //update : function (event, ui) { saveOrder(ui); },
     });
