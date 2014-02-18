@@ -41,6 +41,7 @@ jQuery(function($) {
         connectWith: ["#doing-now", "#recommended", ".day_grid_day"],
         placeholder: 'drop-accepted',
         dropOnEmpty: true,
+        tolerance: 'pointer',
         update : function (event, ui) {
             if ($('#available li.issue').length > 0) {
                 $("#available li.empty-list").hide();
@@ -67,6 +68,7 @@ jQuery(function($) {
         connectWith: ["#available", "#recommended", ".day_grid_day"],
         dropOnEmpty: true,
         placeholder: 'drop-accepted',
+        tolerance: 'pointer',
         update : function (event, ui) {},
         helper: function (event, li) {
           this.copyHelper = li.clone().insertAfter(li);
@@ -88,6 +90,7 @@ jQuery(function($) {
         connectWith: ["#available", "#doing-now", ".day_grid_day"],
         dropOnEmpty: true,
         placeholder: 'drop-accepted',
+        tolerance: 'pointer',
         update : function (event, ui) {},
         helper: function (event, li) {
           this.copyHelper = li.clone().insertAfter(li);
@@ -109,6 +112,7 @@ jQuery(function($) {
         connectWith: ["#available", "#doing-now", "#recommended", ".day_grid_day"],
         dropOnEmpty: true,
         placeholder: 'drop-accepted',
+        tolerance: 'pointer',
         update: function(event, ui) {
           var project = ui.item.find('[data-project]').data('project');
 
