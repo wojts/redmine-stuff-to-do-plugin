@@ -18,3 +18,9 @@
     <% end %>
   </tr>
 </table>
+
+<% if @stuff_days %>
+  <script id="dayGridHours">
+    stuffHours = <%= @stuff_days.to_json.html_safe %>;
+  </script>
+<% end %>

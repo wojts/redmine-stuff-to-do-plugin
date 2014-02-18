@@ -14,9 +14,9 @@ class StuffToDoDay < ActiveRecord::Base
     Rails.logger.info days_params.inspect
     days = days_params.keys.compact
     scoped.where(:user_id => user.id, :scheduled_on => days).destroy_all
-    days_params.each do |day, ids|
-      ids.each_with_index do |id, position|
-        id = id.gsub('stuff_', '')
+    days_params.each do |day, items|
+      items.each do |position, item|
+        id = item[:id].gsub('stuff_', '')
         if id.match(/project/i)
           type = 'Project'
           id = id.sub(/project/i,'')
@@ -30,7 +30,8 @@ class StuffToDoDay < ActiveRecord::Base
           :scheduled_on => day,
           :position => position,
           :stuff_id => id.to_i,
-          :stuff_type => type
+          :stuff_type => type,
+          :hours => item[:hours]
         )
       end
     end

@@ -104,23 +104,52 @@ jQuery(function($) {
         placeholder: 'drop-accepted',
         tolerance: 'pointer',
         update: function(event, ui) {
-          var project = ui.item.find('[data-project]').data('project');
+          calculateAndResize(ui.item);
 
-          calculateHeight(ui.item);
-          ui.item.css(generateCssSeriesColor(project));
-
-          ui.item.resizable({
-            handles: 's',
-            stop: function(event, ui) {
-              var newHeight = ui.element.height();
-              calculateHeight(ui.element, newHeight);
-            }
-          });
-
-          saveDays(ui);
+          saveDays(ui.item.parent());
+        },
+        remove: function(event, ui) {
+          // target of event is .day_grid_day from which ui was removed
+          saveDays($(event.target));
         }
     });
 
+    if (typeof stuffHours !== 'undefined') {
+      $.map(stuffHours, function(items, day) {
+        $.map(items, function(item) {
+          var stuffDay = item.stuff_to_do_day,
+              id = '#stuff_', el, project;
+
+          if (stuffDay.type === 'Project') { id += 'project'; }
+          id += stuffDay.stuff_id;
+
+          el = $('[data-day="' + stuffDay.scheduled_on + '"]').find(id);
+
+          if (stuffDay.hours) {
+            el.attr('data-hours', stuffDay.hours);
+          }
+
+          calculateAndResize(el);
+        });
+      });
+    }
+
+  },
+
+  calculateAndResize = function(el) {
+    var project = el.find('[data-project]').data('project');
+
+    calculateHeight(el);
+    el.css(generateCssSeriesColor(project));
+
+    el.resizable({
+      handles: 's',
+      stop: function(event, ui) {
+        var newHeight = ui.element.height();
+        calculateHeight(ui.element, newHeight);
+        saveDays(ui.element.parent());
+      }
+    });
   },
 
   calculateHeight = function(el, height) {
@@ -138,8 +167,12 @@ jQuery(function($) {
 
     // Calculate height based on estimated hours
     if (typeof height === 'undefined') {
-      hours = parseFloat(el.find('.estimate').text()) || 2;
-      dayHours = Math.min(8-otherHours, hours);
+      if (el.data('hours')) {
+        dayHours = el.data('hours');
+      } else {
+        hours = parseFloat(el.find('.estimate').text()) || 2;
+        dayHours = Math.min(8-otherHours, hours);
+      }
 
     // Use current height to calculate hours
     } else {
@@ -147,9 +180,8 @@ jQuery(function($) {
     }
 
     height = dayHours / 8 * parentHeight - padding;
-    el.height(height).attr('data-hours', dayHours);
 
-    console.log(padding, hours, otherHours, dayHours, height)
+    return el.height(height).attr('data-hours', dayHours).data('hours', dayHours);
   },
 
   saveOrder = function() {
@@ -179,30 +211,37 @@ jQuery(function($) {
 
   },
 
-  saveDays = function(ui) {
-    var data = {user_id: user_id, stuff_days: {}, authenticity_token: window._token},
-        target = ui.item.parent(),
-        sender = ui.sender.parent();
+  saveDays = function(target) {
+    var data = {user_id: user_id, stuff_days: {}, authenticity_token: window._token};
 
+    // Method gets called twice when dragged from one .day_grid_day column to another, once for sender and once for target.
+    // Target is the same on both, but only the sender event has the sender defined.
     if (target.is('.day_grid_day')) {
-      data['stuff_days'][target.data('day')] = target.sortable('toArray');
-    }
+      data['stuff_days'][target.data('day')] = $.map(target.find('li.stuff-to-do-item'), function(el) {
+        return {id: el.id, hours: $(el).data('hours')};
+      });
 
-    if (sender.is('.day_grid_day')) {
-      data['stuff_days'][sender.data('day')] = sender.sortable('toArray');
-    }
-
-    $.ajax({
-      type: "POST",
-      url: "stuff_to_do/save_days.js",
-      dataType: "js",
-      data: data,
-      success: function(response) {
-      },
-      error: function(response) {
-        $("div#stuff-to-do-error").html("Error saving lists.  Please refresh the page and try again.").show();
+      // jQuery bug makes empty objects and arrays not get sent to server in AJAX request:
+      // http://bugs.jquery.com/ticket/6481
+      // Supposedly fixed in newer versions of jQuery.
+      if ($.isEmptyObject(data['stuff_days'][target.data('day')])) {
+        data['stuff_days'][target.data('day')] = "delete"
       }
-    });
+    }
+
+    if (!$.isEmptyObject(data.stuff_days)) {
+      $.ajax({
+        type: "POST",
+        url: "stuff_to_do/save_days.js",
+        dataType: "js",
+        data: data,
+        success: function(response) {
+        },
+        error: function(response) {
+          $("div#stuff-to-do-error").html("Error saving lists.  Please refresh the page and try again.").show();
+        }
+      });
+    }
   },
 
     isProjectItem = function(element) {
