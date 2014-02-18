@@ -249,7 +249,7 @@ jQuery(function($) {
 var projectColors = {},
     saturation = 0.08,
     value = 0.98; // aka brightness
-    hue = 0.45; // or mix it up with Math.random()
+    hue = 0.65; // or mix it up with Math.random()
 
 var GOLDEN_RATIO = 0.618033988749895;
 
