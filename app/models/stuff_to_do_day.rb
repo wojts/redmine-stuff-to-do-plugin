@@ -6,7 +6,7 @@ class StuffToDoDay < ActiveRecord::Base
   acts_as_list :scope => :user
 
   def self.user_for_week_starting(user, start_date)
-    end_date = start_date + 7.days
+    end_date = start_date + 6.days
     scoped.where(:user_id => user.id, :scheduled_on => start_date..end_date)
   end
 
