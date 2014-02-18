@@ -27,3 +27,8 @@
   :multiple => true) %>
 </p>
 
+<p>
+  <label><%= l(:stuff_to_do_use_day_grid) %></label>
+  <%= hidden_field_tag 'settings[use_day_grid]', 0 %>
+  <%= check_box_tag 'settings[use_day_grid]', 1, @settings['use_day_grid'].to_i == 1 %>
+</p>
