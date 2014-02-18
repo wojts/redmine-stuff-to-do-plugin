@@ -9,7 +9,7 @@
           <% else %>
             <%= image_tag('ticket.png') + '#' + h(issue.id) %>
           <% end %>
-          - <%= h(issue.project.name) %>
+          - <span data-project="<%= issue.project.identifier %>"><%= h(issue.project.name) %></span>
           - <small><%= h(issue.status.name) %></small>
           - <%= h(issue.subject) %>
           </div>

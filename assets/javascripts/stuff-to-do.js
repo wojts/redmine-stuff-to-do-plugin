@@ -110,7 +110,10 @@ jQuery(function($) {
         dropOnEmpty: true,
         placeholder: 'drop-accepted',
         update: function(event, ui) {
+          var project = ui.item.find('[data-project]').data('project');
+
           calculateHeight(ui.item);
+          ui.item.css('background', generateCssSeriesColor(project));
 
           ui.item.resizable({
             handles: 's',
@@ -238,3 +241,41 @@ jQuery(function($) {
     });
 
 });
+
+var projectColors = {},
+    saturation = 0.08,
+    value = 0.98; // aka brightness
+    hue = 0.45; // or mix it up with Math.random()
+
+var GOLDEN_RATIO = 0.618033988749895;
+
+// HSV values in [0..1[
+// returns [r, g, b] values from 0 to 255
+// See http://martin.ankerl.com/2009/12/09/how-to-create-random-colors-programmatically/
+function hsvToRgb(h, s, v) {
+  var h_i, f, p, q, t, r, g, b;
+  h_i = parseInt(h*6);
+  f = h*6 - h_i;
+  p = v * (1 - s);
+  q = v * (1 - f*s);
+  t = v * (1 - (1 - f) * s);
+  if (h_i==0) { r = v; g = t; b = p; }
+  if (h_i==1) { r = q; g = v; b = p; }
+  if (h_i==2) { r = p; g = v; b = t; }
+  if (h_i==3) { r = p; g = q; b = v; }
+  if (h_i==4) { r = t; g = p; b = v; }
+  if (h_i==5) { r = v; g = p; b = q; }
+  return [parseInt(r*256), parseInt(g*256), parseInt(b*256)];
+}
+
+function generateCssSeriesColor(project) {
+  var color;
+  if (projectColors[project]) {
+    color = projectColors[project];
+  } else {
+    hue += GOLDEN_RATIO;
+    hue %= 1;
+    projectColors[project] = color = "rgb(" + hsvToRgb(hue, saturation, value) + ")";
+  }
+  return color;
+}
