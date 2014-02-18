@@ -1,26 +1,35 @@
-<h3>Day Grid</h3>
+<div id="day-grid-pane">
+  <div id="stuff-to-do-day-grid-error" class="flash error" style="display:none"></div>
+  <h3>Day Grid</h3>
 
-<table id="day_grid">
-  <tr>
-    <% @days.each do |day| %>
-      <th><%= day.strftime("%A") %><br /><%= day.to_formatted_s(:short) %></th>
-    <% end %>
-  </tr>
-  <tr>
-    <% @days.each do |day| %>
-      <td>
-        <ol class="day_grid_day" data-day="<%= day %>">
-          <% if @stuff_days && @stuff_days[day] %>
-            <%= render :partial => 'item', :collection => stuff_for(@stuff_days[day].sort_by(&:position)) %>
-          <% end %>
-        </ol>
-      </td>
-    <% end %>
-  </tr>
-</table>
+  <div id="day-grid-week-links">
+    <%= link_to "Next week &raquo;".html_safe, url_for(:action => :day_grid, :start_date => @days.first + 7), :data => {:remote => true}, :class => 'change-week', :id => 'day-grid-next' %>
+    <%= link_to "Current week", url_for(:action => :day_grid), :data => {:remote => true}, :class => 'change-week', :id => 'day-grid-current' %>
+    <%= link_to "&laquo; Previous week".html_safe, url_for(:action => :day_grid, :start_date => @days.first - 7), :data => {:remote => true}, :class => 'change-week', :id => 'day-grid-prev' %>
+  </div>
 
-<% if @stuff_days %>
-  <script id="dayGridHours">
-    stuffHours = <%= @stuff_days.to_json.html_safe %>;
-  </script>
-<% end %>
+  <table id="day_grid">
+    <tr>
+      <% @days.each do |day| %>
+        <th><%= day.strftime("%A") %><br /><%= day.to_formatted_s(:short) %></th>
+      <% end %>
+    </tr>
+    <tr>
+      <% @days.each do |day| %>
+        <td>
+          <ol class="day_grid_day" data-day="<%= day %>">
+            <% if @stuff_days && @stuff_days[day] %>
+              <%= render :partial => 'item', :collection => stuff_for(@stuff_days[day].sort_by(&:position)) %>
+            <% end %>
+          </ol>
+        </td>
+      <% end %>
+    </tr>
+  </table>
+
+  <% if @stuff_days %>
+    <script id="dayGridHours">
+      stuffHours = <%= @stuff_days.to_json.html_safe %>;
+    </script>
+  <% end %>
+</div>

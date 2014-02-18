@@ -1,4 +1,9 @@
 // TODO: JSUnit test this
+$(document).delegate(".change-week", "ajax:success", function(e, response) {
+  $('#day-grid-pane').html(response);
+  attachDayGridSortables();
+});
+
 jQuery(function($) {
 	
     $("#user_id").change(function() {  $("form#user_switch").submit();  });
@@ -97,6 +102,11 @@ jQuery(function($) {
         }
     });
 
+    attachDayGridSortables();
+
+  },
+
+  attachDayGridSortables = function() {
     $(".day_grid_day").sortable({
         cancel: 'a',
         connectWith: ["#available", "#doing-now", "#recommended", ".day_grid_day"],
@@ -133,7 +143,6 @@ jQuery(function($) {
         });
       });
     }
-
   },
 
   calculateAndResize = function(el) {
@@ -232,13 +241,10 @@ jQuery(function($) {
     if (!$.isEmptyObject(data.stuff_days)) {
       $.ajax({
         type: "POST",
-        url: "stuff_to_do/save_days.js",
-        dataType: "js",
+        url: "stuff_to_do/save_days",
         data: data,
-        success: function(response) {
-        },
         error: function(response) {
-          $("div#stuff-to-do-error").html("Error saving lists.  Please refresh the page and try again.").show();
+          $("div#stuff-to-do-day-grid-error").html("Error saving day grid.  Please refresh the page and try again.").show();
         }
       });
     }
