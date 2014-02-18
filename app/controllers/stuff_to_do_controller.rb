@@ -8,9 +8,7 @@ class StuffToDoController < ApplicationController
   helper :custom_fields
   
   def index
-    @doing_now = StuffToDo.doing_now(@user)
-    @recommended = StuffToDo.recommended(@user)
-    @available = StuffToDo.available(@user, @project, default_filters )
+    load_stuff
 
     @users = StuffToDoReportee.reportees_for(User.current)
     @users << User.current unless @users.include?(User.current)
@@ -45,13 +43,20 @@ class StuffToDoController < ApplicationController
   
   def reorder
     StuffToDo.reorder_list(@user, params[:stuff])
-    @doing_now = StuffToDo.doing_now(@user)
-    @recommended = StuffToDo.recommended(@user)
-    @available = StuffToDo.available(@user, @project, get_filters )
+    load_stuff(get_filters)
 
     respond_to do |format|
       format.html { redirect_to :action => 'index'}
       format.js { render :partial => 'panes', :layout => false}
+    end
+  end
+
+  def save_days
+    StuffToDoDay.save_days(@user, params[:stuff_days])
+    load_stuff(get_filters)
+
+    respond_to do |format|
+      format.js { render :nothing => true, :status => 200 }
     end
   end
   
@@ -130,6 +135,18 @@ class StuffToDoController < ApplicationController
     # Edge case
     return { }
     end
+  end
+
+  def load_stuff(filters=nil)
+    filters ||= default_filters
+
+    @doing_now = StuffToDo.doing_now(@user)
+    @recommended = StuffToDo.recommended(@user)
+    @available = StuffToDo.available(@user, @project, filters )
+
+    start_date = Date.today.at_beginning_of_week
+    @stuff_days = StuffToDoDay.user_for_week_starting(@user, start_date).group_by(&:scheduled_on)
+    @days = start_date..(start_date + 7.days)
   end
 
 end
