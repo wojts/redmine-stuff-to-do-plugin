@@ -9,7 +9,7 @@
    <% else %>
     <%= image_tag('package.png') %>
    <% end %>
-   <%= h project.name %>
+   <span data-project="<%= issue.project.identifier %>"><%= h project.name %></span>
   </div>
 <% end %>
 <div style="clear:left;"></div>
