@@ -149,7 +149,7 @@ class StuffToDoController < ApplicationController
 
     start_date = Date.today.at_beginning_of_week
     @stuff_days = StuffToDoDay.user_for_week_starting(@user, start_date).group_by(&:scheduled_on)
-    @days = start_date..(start_date + 7.days)
+    @days = start_date..(start_date + 6.days)
   end
 
 end
