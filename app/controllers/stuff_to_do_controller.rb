@@ -58,9 +58,7 @@ class StuffToDoController < ApplicationController
     StuffToDoDay.save_days(@user, params[:stuff_days])
     load_stuff(get_filters)
 
-    respond_to do |format|
-      format.js { render :nothing => true, :status => 200 }
-    end
+    render :nothing => true, :status => 200
   end
   
   def available_issues
@@ -69,6 +67,13 @@ class StuffToDoController < ApplicationController
     respond_to do |format|
       format.html { redirect_to :action => 'index'}
       format.js { render :partial => 'right_panes', :layout => false}
+    end
+  end
+
+  def day_grid
+    load_stuff
+    respond_to do |format|
+      format.html { render :partial => 'stuff_to_do/day_grid' }
     end
   end
 
@@ -147,7 +152,7 @@ class StuffToDoController < ApplicationController
     @recommended = StuffToDo.recommended(@user)
     @available = StuffToDo.available(@user, @project, filters )
 
-    start_date = Date.today.at_beginning_of_week
+    start_date = params[:start_date].present? ? Date.parse(params[:start_date]) : Date.today.at_beginning_of_week
     @stuff_days = StuffToDoDay.user_for_week_starting(@user, start_date).group_by(&:scheduled_on)
     @days = start_date..(start_date + 6.days)
   end

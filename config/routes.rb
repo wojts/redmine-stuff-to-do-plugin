@@ -13,6 +13,8 @@ if Rails::VERSION::MAJOR >= 3
   match '/stuff_to_do/reportees/add', :to=> 'stuff_to_do_reportee#add', :via => [:get, :post]
   match '/stuff_to_do/reportees/delete', :to=> 'stuff_to_do_reportee#delete', :via => [:get, :post]
   match '/stuff_to_do/clear', :to => 'stuff_to_do#clear', :via => [:get, :post]
+  match '/stuff_to_do/day_grid', :to => 'stuff_to_do#day_grid', :via => [:get]
+  match '/stuff_to_do/save_days', :to => 'stuff_to_do#save_days', :via => [:post]
 else
   ActionController::Routing::Routes.draw do |map|
     map.with_options :controller => 'stuff_to_do' do |stuff_routes|

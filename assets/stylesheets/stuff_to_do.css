@@ -34,6 +34,10 @@ div.pane-summary table.progress { float: right; margin: 1px 6px;}
 #day_grid td table.progress { border: solid 1px #aaa; }
 #day_grid td div.issue-details, #day_grid td div.project-details { display: block; float: none; }
 #day_grid td li.stuff-to-do-item div.estimate { left: auto; top: auto; width: auto; overflow: initial; }
+#day-grid-week-links { text-align: center; }
+#day-grid-prev { float: left; }
+#day-grid-current { margin-left: -2em; }
+#day-grid-next { float: right; }
 /* */
 
 /* Port of the issue coloring on the alternate.css theme */
