@@ -1,0 +1,19 @@
+<h3>Day Grid</h3>
+
+<% range = Date.today.at_beginning_of_week..Date.today.at_end_of_week %>
+
+<table id="day_grid">
+  <tr>
+    <% range.each do |day| %>
+      <th><%= day.strftime("%A") %><br /><%= day.to_formatted_s(:short) %></th>
+    <% end %>
+  </tr>
+  <tr>
+    <% range.each do |day| %>
+      <td>
+        <ol class="day_grid_day">
+        </ol>
+      </td>
+    <% end %>
+  </tr>
+</table>

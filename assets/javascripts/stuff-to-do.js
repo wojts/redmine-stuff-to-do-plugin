@@ -38,7 +38,7 @@ jQuery(function($) {
   attachSortables = function() {
     $("#available").sortable({
         cancel: 'a',
-        connectWith: ["#doing-now", "#recommended"],
+        connectWith: ["#doing-now", "#recommended", ".day_grid_day"],
         placeholder: 'drop-accepted',
         dropOnEmpty: true,
         update : function (event, ui) {
@@ -52,7 +52,7 @@ jQuery(function($) {
 
     $("#doing-now").sortable({
         cancel: 'a',
-        connectWith: ["#available", "#recommended"],
+        connectWith: ["#available", "#recommended", ".day_grid_day"],
         dropOnEmpty: true,
         placeholder: 'drop-accepted',
         update : function (event, ui) { saveOrder(ui); },
@@ -60,14 +60,61 @@ jQuery(function($) {
 
     $("#recommended").sortable({
         cancel: 'a',
-        connectWith: ["#available", "#doing-now"],
+        connectWith: ["#available", "#doing-now", ".day_grid_day"],
         dropOnEmpty: true,
         placeholder: 'drop-accepted',
         update : function (event, ui) { saveOrder(ui); },
     });
 
+    $(".day_grid_day").sortable({
+        cancel: 'a',
+        connectWith: ["#available", "#doing-now", "#recommended", ".day_grid_day"],
+        dropOnEmpty: true,
+        placeholder: 'drop-accepted',
+        update: function(event, ui) {
+          calculateHeight(ui.item);
+
+          ui.item.resizable({
+            handles: 's',
+            stop: function(event, ui) {
+              var newHeight = ui.element.height();
+              calculateHeight(ui.element, newHeight);
+            }
+          });
+        }
+        //update : function (event, ui) { saveOrder(ui); },
+    });
+
   },
 
+  calculateHeight = function(el, height) {
+    var parent = el.parent(),
+        parentHeight = parent.height(),
+        padding = 12,
+        otherHours = 0,
+        hours,
+        dayHours,
+        newHeight;
+
+    parent.find('[data-hours]').not(el).each( function(i, otherEl) {
+      otherHours += parseFloat($(otherEl).data('hours'));
+    });
+
+    // Calculate height based on estimated hours
+    if (typeof height === 'undefined') {
+      hours = parseFloat(el.find('.estimate').text()) || 2;
+      dayHours = Math.min(8-otherHours, hours);
+
+    // Use current height to calculate hours
+    } else {
+      dayHours = height / parentHeight * 8;
+    }
+
+    height = dayHours / 8 * parentHeight - padding;
+    el.height(height).attr('data-hours', dayHours);
+
+    console.log(padding, hours, otherHours, dayHours, height)
+  },
 
   saveOrder = function() {
     data = 'user_id=' + user_id + '&' + $("#doing-now").sortable('serialize') + '&' + $("#recommended").sortable('serialize');
