@@ -1,4 +1,5 @@
 <li class="stuff-to-do-item project <%= project_counter.odd? ? "odd" : "even" %>" id="stuff_project<%= project.id %>">
+<div class="stuff-to-do-inner">
 <div class="project-details">      
 <% if !User.current.allowed_to? :view_issues, project and !User.current.allowed_to_globally?(:view_all_reportee_stuff_to_do, {}) %>
   <em><%= l(:stuff_to_do_project_unathorized) %></em>
@@ -13,4 +14,5 @@
   </div>
 <% end %>
 <div style="clear:left;"></div>
+</div>
 </li>
