@@ -3,9 +3,9 @@
   <h3>Day Grid</h3>
 
   <div id="day-grid-week-links">
-    <%= link_to "Next week &raquo;".html_safe, url_for(:action => :day_grid, :start_date => @days.first + 7), :data => {:remote => true}, :class => 'change-week', :id => 'day-grid-next' %>
-    <%= link_to "Current week", url_for(:action => :day_grid), :data => {:remote => true}, :class => 'change-week', :id => 'day-grid-current' %>
-    <%= link_to "&laquo; Previous week".html_safe, url_for(:action => :day_grid, :start_date => @days.first - 7), :data => {:remote => true}, :class => 'change-week', :id => 'day-grid-prev' %>
+    <%= link_to "Next week &raquo;".html_safe, params.merge(:action => :day_grid, :start_date => @days.first + 7), :data => {:remote => true}, :class => 'change-week', :id => 'day-grid-next' %>
+    <%= link_to "Current week", params.merge(:action => :day_grid).except(:start_date), :data => {:remote => true}, :class => 'change-week', :id => 'day-grid-current' %>
+    <%= link_to "&laquo; Previous week".html_safe, params.merge(:action => :day_grid, :start_date => @days.first - 7), :data => {:remote => true}, :class => 'change-week', :id => 'day-grid-prev' %>
   </div>
 
   <table id="day_grid">
