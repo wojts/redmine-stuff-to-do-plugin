@@ -36,6 +36,9 @@ div.pane-summary table.progress { float: right; margin: 1px 6px;}
 #day_grid td table.progress { border: solid 1px #aaa; }
 #day_grid td div.issue-details, #day_grid td div.project-details { display: block; float: none; }
 #day_grid td li.stuff-to-do-item div.estimate { left: auto; top: auto; width: auto; overflow: initial; }
+.remove-from-day-grid { display: none; }
+#day_grid .remove-from-day-grid { position: absolute; right: 4px; z-index: 1; top: 0; }
+#day_grid td li.stuff-to-do-item:hover .remove-from-day-grid { display: block; }
 #day-grid-week-links { text-align: center; }
 #day-grid-prev { float: left; }
 #day-grid-current { margin-left: -2em; }
