@@ -153,8 +153,8 @@ class StuffToDoController < ApplicationController
     @available = StuffToDo.available(@user, @project, filters )
 
     start_date = params[:start_date].present? ? Date.parse(params[:start_date]) : Date.today.at_beginning_of_week
-    @stuff_days = StuffToDoDay.user_for_week_starting(@user, start_date).group_by(&:scheduled_on)
-    @days = start_date..(start_date + 6.days)
+    @days = start_date..(start_date + 13.days)
+    @stuff_days = StuffToDoDay.user_for_period(@user, @days).group_by(&:scheduled_on)
   end
 
 end
