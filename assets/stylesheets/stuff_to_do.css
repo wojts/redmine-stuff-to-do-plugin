@@ -25,7 +25,7 @@ div.pane-summary table.progress { float: right; margin: 1px 6px;}
 
 /* Day grid */
 #day-grid-container { width: 100%; overflow: auto; }
-#day_grid { width: 200%; }
+#day_grid { width: 198%; }
 #day_grid th { background: #eee; padding: 5px 8px; }
 #day_grid td { width: 7.1%; }
 #day_grid td ol.day_grid_day { background-color:#FFFFEE; height: 400px; border: solid 1px #eee; list-style: none; padding-left: 0; }
