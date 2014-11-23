@@ -79,20 +79,20 @@ class StuffToDo < ActiveRecord::Base
       else
         visible_issues =  Issue.visible       
       end
-      potential_stuff_to_do = visible_issues.find(:all,
-                                         :include => [:status, :priority, :project],
-                                         :conditions => conditions_for_available(user, filter, project),
-                                         :order => "#{Issue.table_name}.created_on DESC")
+      potential_stuff_to_do = visible_issues.
+                                         joins(:status, :priority, :project).
+                                         where(conditions_for_available(user, filter, project)).
+                                         order("#{Issue.table_name}.created_on DESC")
     end
 
-    stuff_to_do = StuffToDo.find(:all, :conditions => { :user_id => user.id }).collect(&:stuff)
+    stuff_to_do = StuffToDo.where( :user_id => user.id ).collect(&:stuff)
     
     return potential_stuff_to_do - stuff_to_do
   end
   
   def self.assigned(user)
 
-    return StuffToDo.find(:all, :conditions => { :user_id => user.id }).collect(&:stuff)
+    return StuffToDo.where( :user_id => user.id ).collect(&:stuff)
   end
 
   def self.using_projects_as_items?
