@@ -15,11 +15,11 @@ module StuffToDoIssuePatch
       # Redmine 0.8.x compatibility method
       unless ::Issue.respond_to?(:visible)
         if Rails::VERSION::MAJOR >= 3
-          scope :visible, lambda {|*args| { :include => :project,
-              :conditions => Project.allowed_to_condition(args.first || User.current, :view_issues) } }
+          scope :visible, lambda {|*args| joins(:project).
+              where( Project.allowed_to_condition(args.first || User.current, :view_issues) ) }
         else
-          named_scope :visible, lambda {|*args| { :include => :project,
-              :conditions => Project.allowed_to_condition(args.first || User.current, :view_issues) } }
+          named_scope :visible, lambda {|*args| joins(:project).
+              where( Project.allowed_to_condition(args.first || User.current, :view_issues) ) }
         end
       end
     end

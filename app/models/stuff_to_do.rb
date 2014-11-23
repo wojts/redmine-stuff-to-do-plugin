@@ -17,19 +17,15 @@ class StuffToDo < ActiveRecord::Base
   
   if Rails::VERSION::MAJOR >= 3
     scope :doing_now, lambda { |user|
-      {
-        :conditions => { :user_id => user.id },
-        :order => 'position ASC',
-        :limit => 5
-      }
+      where( :user_id => user.id ).
+        order('position ASC').
+        limit(5)
     }
   else
     named_scope :doing_now, lambda { |user|
-      {
-        :conditions => { :user_id => user.id },
-        :order => 'position ASC',
-        :limit => 5
-      }
+      where( :user_id => user.id ).
+        order('position ASC').
+        limit(5)
     }
   end
   
@@ -42,21 +38,17 @@ class StuffToDo < ActiveRecord::Base
   #
   if Rails::VERSION::MAJOR >= 3
     scope :recommended, lambda { |user|
-      {
-        :conditions => { :user_id => user.id },
-        :order => 'position ASC',
-        :limit => self.count,
-        :offset => 5
-      }
+      where( :user_id => user.id ).
+        order('position ASC').
+        limit(self.count).
+        offset(5)
     }
   else
     named_scope :recommended, lambda { |user|
-      {
-        :conditions => { :user_id => user.id },
-        :order => 'position ASC',
-        :limit => self.count,
-        :offset => 5
-      }
+      where( :user_id => user.id ).
+        order('position ASC').
+        limit(self.count).
+        offset(5)
     }
   end
   
@@ -114,7 +106,7 @@ class StuffToDo < ActiveRecord::Base
 
     # Deliver an email for each user who is below the threshold
     user_ids.uniq.each do |user_id|
-      count = self.count(:conditions => { :user_id => user_id})
+      count = self.where( :user_id => user_id ).count
       threshold = Setting.plugin_stuff_to_do_plugin['threshold']
 
       if threshold && threshold.to_i >= count
