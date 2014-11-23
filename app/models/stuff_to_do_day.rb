@@ -6,13 +6,13 @@ class StuffToDoDay < ActiveRecord::Base
   acts_as_list :scope => :user
 
   def self.user_for_period(user, range)
-    scoped.where(:user_id => user.id, :scheduled_on => range)
+    self.where(:user_id => user.id, :scheduled_on => range)
   end
 
   def self.save_days(user, days_params)
     Rails.logger.info days_params.inspect
     days = days_params.keys.compact
-    scoped.where(:user_id => user.id, :scheduled_on => days).destroy_all
+    self.where(:user_id => user.id, :scheduled_on => days).destroy_all
     days_params.each do |day, items|
       items.each do |position, item|
         id = item[:id].gsub('stuff_', '')
