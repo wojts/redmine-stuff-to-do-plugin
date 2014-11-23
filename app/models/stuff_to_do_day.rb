@@ -24,14 +24,14 @@ class StuffToDoDay < ActiveRecord::Base
           id = id
         end
 
-        StuffToDoDay.create(
-          :user_id => user.id,
-          :scheduled_on => day,
-          :position => position,
-          :stuff_id => id.to_i,
-          :stuff_type => type,
-          :hours => item[:hours]
-        )
+        StuffToDoDay.new.tap do |stdd|
+          stdd.user_id = user.id
+          stdd.scheduled_on = day
+          stdd.position = position
+          stdd.stuff_id = id.to_i
+          stdd.stuff_type = type
+          stdd.hours = item[:hours]
+        end.save!
       end
     end
   end

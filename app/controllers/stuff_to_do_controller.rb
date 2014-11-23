@@ -53,7 +53,12 @@ class StuffToDoController < ApplicationController
 
   def save_days
     params[:stuff_days].each do |day, items|
+      params[:stuff_days][day].permit!
       params[:stuff_days][day] = {} if items == "delete"
+      params[:stuff_days][day].each do |i, attr|
+        params[:stuff_days][day][i].permit!
+        params[:stuff_days][day][i].permit(:id, :hours)
+      end
     end
     StuffToDoDay.save_days(@user, params[:stuff_days])
     load_stuff(get_filters)
