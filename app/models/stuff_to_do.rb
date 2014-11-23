@@ -179,7 +179,7 @@ class StuffToDo < ActiveRecord::Base
   end
 
   def self.reorder_items(type, user, ids)
-    list = self.find_all_by_user_id_and_stuff_type(user.id, type)
+    list = self.where(:user_id => user.id, :stuff_type => type)
     stuff_to_dos_found = list.collect { |std| std.stuff_id.to_i }
 
     remove_missing_records(user, stuff_to_dos_found, ids.values)
@@ -211,18 +211,18 @@ class StuffToDo < ActiveRecord::Base
   def self.remove_missing_records(user, ids_found_in_database, ids_to_use)
     removed = ids_found_in_database - ids_to_use
     removed.each do |id|
-      removed_stuff_to_do = self.find_by_user_id_and_stuff_id(user.id, id)
+      removed_stuff_to_do = self.where(:user_id => user.id, :stuff_id => id)
       removed_stuff_to_do.destroy
     end
   end
   
   def self.remove(user_id, id)
-    removed_stuff_to_do = self.find_by_user_id_and_stuff_id(user_id, id)
+    removed_stuff_to_do = self.where(:user_id => user_id, :stuff_id => id)
     removed_stuff_to_do.destroy
   end
   
   def self.add(user_id, id, to_front)
-    if (find_by_user_id_and_stuff_id(user_id, id).nil?) #make sure it's not already there
+    if (where(:user_id => user_id, :stuff_id => id).nil?) #make sure it's not already there
       stuff_to_do = self.new
               stuff_to_do.stuff_id = id
               stuff_to_do.stuff_type = 'Issue'
