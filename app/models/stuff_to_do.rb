@@ -211,13 +211,13 @@ class StuffToDo < ActiveRecord::Base
   def self.remove_missing_records(user, ids_found_in_database, ids_to_use)
     removed = ids_found_in_database - ids_to_use
     removed.each do |id|
-      removed_stuff_to_do = self.where(:user_id => user.id, :stuff_id => id)
+      removed_stuff_to_do = self.find_by(:user_id => user.id, :stuff_id => id)
       removed_stuff_to_do.destroy
     end
   end
   
   def self.remove(user_id, id)
-    removed_stuff_to_do = self.where(:user_id => user_id, :stuff_id => id)
+    removed_stuff_to_do = self.find_by(:user_id => user_id, :stuff_id => id)
     removed_stuff_to_do.destroy
   end
   
