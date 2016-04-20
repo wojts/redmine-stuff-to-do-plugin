@@ -6,7 +6,7 @@
           </div>
         <% else %>
           <% if User.current.allowed_to? :view_issues, issue.project %>
-            <%= link_to(image_tag('ticket.png') + '#' + h(issue.id), :controller => 'issues', :action => 'show', :id => issue) %>
+            <%= link_to(image_tag('ticket.png') + h("#{issue.tracker} ##{issue.id}"), :controller => 'issues', :action => 'show', :id => issue) %>
           <% else %>
             <%= image_tag('ticket.png') + '#' + h(issue.id) %>
           <% end %>
